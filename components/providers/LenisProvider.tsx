@@ -34,10 +34,19 @@ export function LenisProvider({ children }: { children: React.ReactNode }) {
       },
     });
 
+    // Recompute all pin positions when the mobile browser chrome
+    // expands/collapses (viewport height changes) — prevents overlapping
+    // sections after the URL bar hides on scroll.
+    const handleResize = () => ScrollTrigger.refresh();
+    window.addEventListener("resize", handleResize, { passive: true });
+    window.addEventListener("orientationchange", handleResize, { passive: true });
+
     return () => {
       ScrollTrigger.getAll().forEach((t) => t.kill());
       gsap.ticker.remove(rafFn);
       lenis.destroy();
+      window.removeEventListener("resize", handleResize);
+      window.removeEventListener("orientationchange", handleResize);
     };
   }, []);
 

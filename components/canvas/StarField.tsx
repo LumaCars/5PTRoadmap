@@ -5,7 +5,11 @@ import * as THREE from "three";
 
 export function StarField() {
   const positions = useMemo(() => {
-    const count = 3000;
+    // Reduce star count on small / low-power devices so mobile GPUs don't
+    // choke (or worse, lose the WebGL context and crash the page).
+    const isMobile =
+      typeof window !== "undefined" && window.innerWidth < 768;
+    const count = isMobile ? 800 : 3000;
     const pos = new Float32Array(count * 3);
 
     for (let i = 0; i < count; i++) {

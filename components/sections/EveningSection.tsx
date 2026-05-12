@@ -5,6 +5,7 @@ import dynamic from "next/dynamic";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { motion } from "framer-motion";
+import { useIsMobile } from "@/lib/useIsMobile";
 
 const Spline = dynamic(() => import("@splinetool/react-spline"), { ssr: false });
 
@@ -29,6 +30,7 @@ const ShimmerLines = memo(function ShimmerLines() {
 });
 
 export function EveningSection() {
+  const isMobile = useIsMobile();
   const sectionRef = useRef<HTMLElement>(null);
   const timeRef = useRef<HTMLParagraphElement>(null);
   const titleRef = useRef<HTMLHeadingElement>(null);
@@ -39,7 +41,6 @@ export function EveningSection() {
     if (!section) return;
 
     const vh = window.innerHeight;
-    const isMobile = window.innerWidth < 768;
 
     const ctx = gsap.context(() => {
       if (!isMobile) {
@@ -79,19 +80,36 @@ export function EveningSection() {
       className="relative min-h-[100dvh] flex flex-col items-center justify-center overflow-hidden"
       style={{ background: "transparent" }}
     >
-      {/* Spline 3D scene — full bleed background */}
-      <div
-        style={{
-          position: "absolute",
-          inset: 0,
-          width: "100%",
-          height: "100%",
-          zIndex: 0,
-          pointerEvents: "none",
-        }}
-      >
-        <Spline scene="https://prod.spline.design/qs4F1eUxT8rhVinh/scene.splinecode" />
-      </div>
+      {/* Background — Spline 3D scene on desktop only. On mobile we use a
+          lightweight CSS gradient because a second WebGL context (alongside
+          SpaceCanvas / R3F) reliably crashes iOS Safari and many Android
+          browsers, surfacing as a "This page couldn't load" error. */}
+      {!isMobile ? (
+        <div
+          style={{
+            position: "absolute",
+            inset: 0,
+            width: "100%",
+            height: "100%",
+            zIndex: 0,
+            pointerEvents: "none",
+          }}
+        >
+          <Spline scene="https://prod.spline.design/qs4F1eUxT8rhVinh/scene.splinecode" />
+        </div>
+      ) : (
+        <div
+          aria-hidden
+          style={{
+            position: "absolute",
+            inset: 0,
+            zIndex: 0,
+            pointerEvents: "none",
+            background:
+              "radial-gradient(ellipse 70% 55% at 50% 45%, rgba(155,142,196,0.18) 0%, rgba(15,12,28,0.55) 45%, rgba(5,5,10,0.85) 100%)",
+          }}
+        />
+      )}
 
       <ShimmerLines />
 
