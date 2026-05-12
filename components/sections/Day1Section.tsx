@@ -77,7 +77,6 @@ const PIN_VH = 180;        // vh per item
 
 export function Day1Section() {
   const sectionRef = useRef<HTMLElement>(null);
-  const progressRef = useRef<HTMLDivElement>(null);
   const itemRefs = useRef<(HTMLDivElement | null)[]>([]);
   const swipeRef = useRef<HTMLAudioElement | null>(null);
 
@@ -137,14 +136,6 @@ export function Day1Section() {
           i + 0.85
         );
       });
-
-      // Progress bar scaleX 0→1 across the full timeline
-      tl.fromTo(
-        progressRef.current,
-        { scaleX: 0 },
-        { scaleX: 1, duration: N, ease: "none" },
-        0
-      );
 
       ScrollTrigger.create({
         trigger: section,
@@ -288,27 +279,6 @@ export function Day1Section() {
         ))}
       </div>
 
-      {/* Progress bar — lavender, scaleX 0→1 */}
-      <div
-        style={{
-          position: "absolute",
-          bottom: 0,
-          left: 0,
-          right: 0,
-          height: "2px",
-          background: "rgba(155,142,196,0.15)",
-        }}
-      >
-        <div
-          ref={progressRef}
-          style={{
-            height: "100%",
-            background: "#9B8EC4",
-            transformOrigin: "left center",
-            transform: "scaleX(0)",
-          }}
-        />
-      </div>
     </section>
   );
 }
