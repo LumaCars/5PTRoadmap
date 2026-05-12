@@ -98,21 +98,21 @@ export function Day1Section() {
         const el = itemRefs.current[i];
         if (!el) return;
 
-        // Odd indices (0,2,4…) from LEFT; even indices (1,3,5…) from RIGHT
-        const side = i % 2 === 0 ? "-120vw" : "120vw";
+        // Odd indices (0,2,4…) nudge from LEFT; even from RIGHT — subtle fade, not off-screen
+        const nudge = i % 2 === 0 ? -80 : 80;
 
-        // Fly in [i → i+0.15]
+        // Fade in [i → i+0.15]
         tl.fromTo(
           el,
-          { x: side, opacity: 0 },
+          { x: nudge, opacity: 0 },
           { x: 0, opacity: 1, duration: 0.15, ease: "power2.out" },
           i
         );
 
-        // Fly out [i+0.85 → i+1] — back the same direction
+        // Fade out [i+0.85 → i+1] — back the same direction
         tl.to(
           el,
-          { x: side, opacity: 0, duration: 0.15, ease: "power2.in" },
+          { x: nudge, opacity: 0, duration: 0.15, ease: "power2.in" },
           i + 0.85
         );
       });
@@ -143,7 +143,7 @@ export function Day1Section() {
     <section
       ref={sectionRef}
       className="relative min-h-[100dvh]"
-      style={{ background: "#050505", overflow: "hidden" }}
+      style={{ background: "transparent", overflow: "hidden" }}
     >
       {/* DAY 1 watermark — faded left */}
       <div
@@ -210,6 +210,7 @@ export function Day1Section() {
                 lineHeight: 1,
                 letterSpacing: item.isBreak ? "0.4em" : "0.05em",
                 marginBottom: item.subs.length > 0 ? "1.5rem" : 0,
+                textShadow: "0 0 40px rgba(0,0,0,0.8)",
               }}
             >
               {item.label}
