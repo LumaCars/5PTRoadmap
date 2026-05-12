@@ -20,6 +20,10 @@ export function IntroSection() {
     const section = sectionRef.current;
     if (!section) return;
 
+    // Skip the pin on small screens — pinning + dynamic mobile viewports
+    // causes overlap and jumpy scroll. Mobile gets a clean, smooth flow.
+    if (window.innerWidth < 768) return;
+
     const st = ScrollTrigger.create({
       trigger: section,
       start: "top top",

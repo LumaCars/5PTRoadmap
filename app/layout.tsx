@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Bebas_Neue, DM_Mono } from "next/font/google";
 import "./globals.css";
 
@@ -20,6 +20,14 @@ const dmMono = DM_Mono({
 export const metadata: Metadata = {
   title: "5PT Roadmap · Dubai 2026",
   description: "From the Earth to the Future — May 22–24, 2026 · Dubai",
+};
+
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  maximumScale: 1,
+  userScalable: false,
+  themeColor: "#050505",
 };
 
 export default function RootLayout({

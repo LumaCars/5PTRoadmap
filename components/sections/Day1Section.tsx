@@ -3,6 +3,7 @@
 import { useRef, useEffect, useCallback } from "react";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { useIsMobile } from "@/lib/useIsMobile";
 
 interface ScheduleItem {
   time: string | null;
@@ -75,6 +76,19 @@ const N = SCHEDULE.length; // 17
 const PIN_VH = 180;        // vh per item
 
 export function Day1Section() {
+  const isMobile = useIsMobile();
+
+  if (isMobile) {
+    return <Day1Mobile />;
+  }
+
+  return <Day1Desktop />;
+}
+
+/* -------------------------------------------------------------------------- */
+/*  DESKTOP — original pinned, fly-in / fly-out layout (unchanged behaviour)   */
+/* -------------------------------------------------------------------------- */
+function Day1Desktop() {
   const sectionRef = useRef<HTMLElement>(null);
   const progressRef = useRef<HTMLDivElement>(null);
   const progressTrackRef = useRef<HTMLDivElement>(null);
@@ -301,6 +315,190 @@ export function Day1Section() {
             transform: "scaleX(0)",
           }}
         />
+      </div>
+    </section>
+  );
+}
+
+/* -------------------------------------------------------------------------- */
+/*  MOBILE — vertical stacked list, no pin, smooth normal scroll               */
+/* -------------------------------------------------------------------------- */
+function Day1Mobile() {
+  const sectionRef = useRef<HTMLElement>(null);
+  const listRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    gsap.registerPlugin(ScrollTrigger);
+    const list = listRef.current;
+    if (!list) return;
+
+    const ctx = gsap.context(() => {
+      const items = list.querySelectorAll<HTMLDivElement>("[data-mobile-item]");
+      items.forEach((el) => {
+        gsap.fromTo(
+          el,
+          { y: 24, opacity: 0 },
+          {
+            y: 0,
+            opacity: 1,
+            duration: 0.7,
+            ease: "power2.out",
+            scrollTrigger: {
+              trigger: el,
+              start: "top 88%",
+              once: true,
+            },
+          }
+        );
+      });
+    }, list);
+
+    return () => ctx.revert();
+  }, []);
+
+  return (
+    <section
+      ref={sectionRef}
+      className="relative w-full"
+      style={{
+        background: "transparent",
+        overflow: "hidden",
+        paddingTop: "4.5rem",
+        paddingBottom: "4rem",
+      }}
+    >
+      {/* Top label */}
+      <p
+        aria-hidden
+        style={{
+          fontFamily: "var(--font-dm-mono)",
+          fontSize: "0.55rem",
+          color: "#9B8EC4",
+          letterSpacing: "0.4em",
+          textTransform: "uppercase",
+          textAlign: "center",
+          padding: "0 1.25rem",
+          marginBottom: "0.75rem",
+        }}
+      >
+        DAY 01 &nbsp;·&nbsp; MAY 23, 2026
+      </p>
+
+      {/* Big watermark title */}
+      <h2
+        style={{
+          fontFamily: "var(--font-bebas-neue)",
+          fontSize: "22vw",
+          color: "#F0EEF5",
+          lineHeight: 1,
+          letterSpacing: "0.04em",
+          textAlign: "center",
+          marginBottom: "0.4rem",
+        }}
+      >
+        DAY 1
+      </h2>
+
+      <p
+        style={{
+          fontFamily: "var(--font-dm-mono)",
+          fontSize: "0.6rem",
+          color: "rgba(240,238,245,0.5)",
+          letterSpacing: "0.35em",
+          textTransform: "uppercase",
+          textAlign: "center",
+          marginBottom: "2.5rem",
+        }}
+      >
+        Full Day Schedule
+      </p>
+
+      {/* Schedule list */}
+      <div
+        ref={listRef}
+        style={{
+          width: "100%",
+          maxWidth: "100vw",
+          padding: "0 1.25rem",
+          display: "flex",
+          flexDirection: "column",
+          gap: "1.5rem",
+        }}
+      >
+        {SCHEDULE.map((item, i) => (
+          <div
+            key={i}
+            data-mobile-item
+            style={{
+              opacity: 0,
+              width: "100%",
+              borderLeft: item.isBreak
+                ? "1px dashed rgba(155,142,196,0.3)"
+                : "1px solid rgba(155,142,196,0.25)",
+              paddingLeft: "1rem",
+              display: "flex",
+              flexDirection: "column",
+              gap: "0.5rem",
+            }}
+          >
+            {item.time && (
+              <p
+                style={{
+                  fontFamily: "var(--font-dm-mono)",
+                  fontSize: "0.65rem",
+                  color: "#9B8EC4",
+                  letterSpacing: "0.3em",
+                  textTransform: "uppercase",
+                }}
+              >
+                {item.time}
+              </p>
+            )}
+
+            <h3
+              style={{
+                fontFamily: "var(--font-bebas-neue)",
+                fontSize: item.isBreak ? "1.2rem" : "1.7rem",
+                color: item.isBreak ? "rgba(240,238,245,0.45)" : "#F0EEF5",
+                lineHeight: 1.05,
+                letterSpacing: item.isBreak ? "0.35em" : "0.04em",
+                wordBreak: "break-word",
+              }}
+            >
+              {item.label}
+            </h3>
+
+            {item.subs.length > 0 && (
+              <ul
+                style={{
+                  listStyle: "none",
+                  padding: 0,
+                  margin: 0,
+                  display: "flex",
+                  flexDirection: "column",
+                  gap: "0.25rem",
+                  marginTop: "0.25rem",
+                }}
+              >
+                {item.subs.map((sub, j) => (
+                  <li
+                    key={j}
+                    style={{
+                      fontFamily: "var(--font-dm-mono)",
+                      fontSize: "0.7rem",
+                      color: "rgba(240,238,245,0.55)",
+                      letterSpacing: "0.18em",
+                      textTransform: "uppercase",
+                      lineHeight: 1.4,
+                    }}
+                  >
+                    {sub}
+                  </li>
+                ))}
+              </ul>
+            )}
+          </div>
+        ))}
       </div>
     </section>
   );

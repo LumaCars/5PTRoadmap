@@ -22,15 +22,18 @@ export function OutroSection() {
     if (!section) return;
 
     const vh = window.innerHeight;
+    const isMobile = window.innerWidth < 768;
 
     const ctx = gsap.context(() => {
-      ScrollTrigger.create({
-        trigger: section,
-        start: "top top",
-        end: `+=${vh * 2}`,
-        pin: true,
-        pinSpacing: true,
-      });
+      if (!isMobile) {
+        ScrollTrigger.create({
+          trigger: section,
+          start: "top top",
+          end: `+=${vh * 2}`,
+          pin: true,
+          pinSpacing: true,
+        });
+      }
 
       const tl = gsap.timeline({
         scrollTrigger: {
