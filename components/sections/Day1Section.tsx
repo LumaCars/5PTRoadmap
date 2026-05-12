@@ -3,7 +3,6 @@
 import { useRef, useEffect, useCallback } from "react";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
-import { hasInteracted } from "@/lib/audioInteraction";
 
 interface ScheduleItem {
   time: string | null;
@@ -80,7 +79,6 @@ export function Day1Section() {
   const progressRef = useRef<HTMLDivElement>(null);
   const progressTrackRef = useRef<HTMLDivElement>(null);
   const itemRefs = useRef<(HTMLDivElement | null)[]>([]);
-  const swipeRef = useRef<HTMLAudioElement | null>(null);
 
   const setItemRef = useCallback((el: HTMLDivElement | null, i: number) => {
     itemRefs.current[i] = el;
@@ -90,13 +88,6 @@ export function Day1Section() {
     gsap.registerPlugin(ScrollTrigger);
     const section = sectionRef.current;
     if (!section) return;
-
-    // Single reusable swipe sound instance
-    const swipe = new Audio(
-      "https://d6gmlk5qn4ikdodg.public.blob.vercel-storage.com/swipe.mp3"
-    );
-    swipe.volume = 0.5;
-    swipeRef.current = swipe;
 
     // 17 items × 180vh
     const pinDist = (window.innerHeight * N * PIN_VH) / 100;
@@ -120,13 +111,6 @@ export function Day1Section() {
             opacity: 1,
             duration: 0.15,
             ease: "power2.out",
-            onStart: () => {
-              if (!hasInteracted()) return;
-              const s = swipeRef.current;
-              if (!s) return;
-              s.currentTime = 0;
-              s.play().catch(() => {});
-            },
           },
           i
         );
