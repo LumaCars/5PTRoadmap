@@ -41,8 +41,8 @@ export function SpaceCanvas() {
       >
         <Canvas
           camera={{ position: [0, 0, 500], fov: 60, near: 0.1, far: 5000 }}
-          dpr={[1, 1.5]}
-          gl={{ antialias: false, alpha: false }}
+          dpr={[1, 1.25]}
+          gl={{ antialias: false, alpha: false, powerPreference: "high-performance" }}
           style={{ background: "#050505", width: "100%", height: "100%", display: "block" }}
         >
           <Suspense fallback={null}>
