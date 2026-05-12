@@ -1,12 +1,13 @@
 "use client";
 
 import { useRef, useEffect, memo } from "react";
+import dynamic from "next/dynamic";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
-import { CharReveal } from "@/components/ui/CharReveal";
 import { motion } from "framer-motion";
 
-// Perpetual shimmer lines isolated in React.memo to avoid re-renders from parent
+const Spline = dynamic(() => import("@splinetool/react-spline"), { ssr: false });
+
 const ShimmerLines = memo(function ShimmerLines() {
   return (
     <div className="absolute inset-0 overflow-hidden pointer-events-none" aria-hidden>
@@ -73,18 +74,23 @@ export function EveningSection() {
     <section
       ref={sectionRef}
       className="relative min-h-[100dvh] flex flex-col items-center justify-center overflow-hidden"
-      style={{ background: "rgba(3,8,25,0.88)" }}
+      style={{ background: "transparent" }}
     >
-      <ShimmerLines />
-
-      {/* Radial glow from bottom */}
+      {/* Spline 3D scene — full bleed background */}
       <div
-        className="absolute inset-0 pointer-events-none"
         style={{
-          background:
-            "radial-gradient(ellipse 80% 50% at 50% 100%, rgba(155,142,196,0.07) 0%, transparent 70%)",
+          position: "absolute",
+          inset: 0,
+          width: "100%",
+          height: "100%",
+          zIndex: 0,
+          pointerEvents: "none",
         }}
-      />
+      >
+        <Spline scene="https://prod.spline.design/qs4F1eUxT8rhVinh/scene.splinecode" />
+      </div>
+
+      <ShimmerLines />
 
       <div className="relative z-10 text-center px-8">
         {/* Time */}
@@ -100,7 +106,11 @@ export function EveningSection() {
         <h2
           ref={titleRef}
           className="font-display leading-none mb-10"
-          style={{ fontSize: "clamp(3.5rem, 8vw, 9rem)", opacity: 0 }}
+          style={{
+            fontSize: "clamp(3.5rem, 8vw, 9rem)",
+            opacity: 0,
+            textShadow: "0 0 40px rgba(0,0,0,0.8)",
+          }}
         >
           <span className="block" style={{ color: "#F0EEF5" }}>
             YACHT DRIVE &
