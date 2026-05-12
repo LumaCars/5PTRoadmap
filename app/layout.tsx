@@ -1,13 +1,21 @@
 import type { Metadata } from "next";
-import { Space_Grotesk } from "next/font/google";
+import { Bebas_Neue, DM_Mono } from "next/font/google";
 import "./globals.css";
-import { LenisProvider } from "@/components/LenisProvider";
+import { LenisProvider } from "@/components/providers/LenisProvider";
 
-const spaceGrotesk = Space_Grotesk({
+const bebasNeue = Bebas_Neue({
   subsets: ["latin"],
-  variable: "--font-space-grotesk",
+  weight: "400",
+  variable: "--font-bebas-neue",
   display: "swap",
-  weight: ["300", "400", "500", "600", "700"],
+});
+
+const dmMono = DM_Mono({
+  subsets: ["latin"],
+  weight: ["300", "400", "500"],
+  style: ["normal", "italic"],
+  variable: "--font-dm-mono",
+  display: "swap",
 });
 
 export const metadata: Metadata = {
@@ -21,7 +29,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" className={spaceGrotesk.variable}>
+    <html lang="en" className={`${bebasNeue.variable} ${dmMono.variable}`}>
       <body>
         <LenisProvider>{children}</LenisProvider>
       </body>

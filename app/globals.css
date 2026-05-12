@@ -1,10 +1,9 @@
 @import "tailwindcss";
 
 @theme {
-  --color-purple: #9B8EC4;
-  --color-purple-dim: #6B5E94;
-  --color-purple-glow: rgba(155, 142, 196, 0.15);
-  --font-grotesk: var(--font-space-grotesk), "Space Grotesk", sans-serif;
+  --color-accent: #9B8EC4;
+  --color-text: #F0EEF5;
+  --color-bg: #050505;
 }
 
 *,
@@ -17,12 +16,13 @@
 
 html {
   scroll-behavior: auto;
+  overflow-x: hidden;
 }
 
 body {
-  background: #000000;
-  color: #ffffff;
-  font-family: var(--font-grotesk);
+  background: #050505;
+  color: #F0EEF5;
+  font-family: var(--font-dm-mono), "DM Mono", monospace;
   overflow-x: hidden;
 }
 
@@ -30,30 +30,36 @@ body {
   width: 2px;
 }
 ::-webkit-scrollbar-track {
-  background: #000;
+  background: #050505;
 }
 ::-webkit-scrollbar-thumb {
   background: #9B8EC4;
-  border-radius: 0;
 }
 
-.char {
-  display: inline-block;
-  will-change: transform, opacity;
+.font-display {
+  font-family: var(--font-bebas-neue), "Bebas Neue", sans-serif;
 }
 
-@keyframes pulse-glow {
-  0%, 100% { opacity: 0.4; transform: translateY(0); }
-  50% { opacity: 1; transform: translateY(6px); }
+.font-label {
+  font-family: var(--font-dm-mono), "DM Mono", monospace;
 }
 
-@keyframes water-shimmer {
-  0% { background-position: 0% 50%; }
-  50% { background-position: 100% 50%; }
-  100% { background-position: 0% 50%; }
+@keyframes shimmer-h {
+  from { transform: translateX(-150%); }
+  to { transform: translateX(150%); }
 }
 
-@keyframes breathe {
-  0%, 100% { opacity: 0.6; }
-  50% { opacity: 1; }
+@keyframes vertical-pulse {
+  0%, 100% { opacity: 0.25; transform: scaleY(0.6); }
+  50% { opacity: 1; transform: scaleY(1); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
 }

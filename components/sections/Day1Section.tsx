@@ -1,106 +1,177 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useRef, useEffect, useCallback } from "react";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 
-const TIMELINE_ITEMS = [
-  { time: "09:00", label: "COME TOGETHER", isAnchor: true },
-  { time: null, label: "BB FUNCTIONS", isAnchor: false },
-  { time: null, label: "BB LEGAL STRUCTURE", isAnchor: false },
-  { time: null, label: "Q&A", isAnchor: false },
-  { time: null, label: "BREAK", isAnchor: false, isBreak: true },
-  { time: null, label: "SERIAL NUMBERS", isAnchor: false },
-  { time: null, label: "CARD DESIGN & MANUFACTURING", isAnchor: false },
-  { time: null, label: "LEDGER PHONE BB", isAnchor: false },
-  { time: null, label: "PORSCHE DRIVE BB", isAnchor: false },
-  { time: null, label: "WHITE LABEL BB", isAnchor: false },
-  { time: null, label: "MINING", isAnchor: false },
-  { time: null, label: "WATER PROJECT", isAnchor: false },
-  { time: null, label: "TRADING", isAnchor: false },
-  { time: "17:00", label: "FINISH", isAnchor: true },
+interface ScheduleItem {
+  time: string | null;
+  label: string;
+  subs: string[];
+  isBreak?: boolean;
+  isAnchor?: boolean;
+}
+
+const SCHEDULE: ScheduleItem[] = [
+  { time: "09:00", label: "COME TOGETHER", subs: [], isAnchor: true },
+  {
+    time: "09:15",
+    label: "BB FUNCTIONS",
+    subs: ["Platform Overview", "Banking Features", "Crypto Integration", "Card Infrastructure"],
+  },
+  {
+    time: null,
+    label: "BB LEGAL STRUCTURE",
+    subs: ["International Structure", "Compliance", "Licensing"],
+  },
+  { time: null, label: "Q&A SESSION", subs: [] },
+  { time: null, label: "BREAK", subs: [], isBreak: true },
+  {
+    time: null,
+    label: "SERIAL NUMBERS",
+    subs: ["Limited Editions", "High-End Numbering", "Collector Concepts"],
+  },
+  {
+    time: null,
+    label: "CARD DESIGN",
+    subs: ["Metal Cards", "Diamond Cards", "Luxury Production"],
+  },
+  { time: null, label: "LEDGER PHONE BB", subs: ["Secure Device", "Self Custody"] },
+  { time: null, label: "PORSCHE DRIVE BB", subs: ["Mobility", "Luxury Integration"] },
+  { time: null, label: "Q&A SESSION", subs: [] },
+  { time: null, label: "BREAK", subs: [], isBreak: true },
+  { time: null, label: "WHITE LABEL BB", subs: ["Partner Structure", "Revenue Streams"] },
+  { time: null, label: "MINING", subs: ["Infrastructure", "Revenue Models"] },
+  {
+    time: null,
+    label: "WATER PROJECT",
+    subs: ["Infrastructure", "International Expansion"],
+  },
+  { time: null, label: "TRADING", subs: ["Market Concepts", "Opportunities"] },
+  { time: null, label: "Q&A SESSION", subs: [] },
+  { time: "17:00", label: "FINISH", subs: [], isAnchor: true },
 ];
 
 export function Day1Section() {
   const sectionRef = useRef<HTMLElement>(null);
-  const wrapperRef = useRef<HTMLDivElement>(null);
-  const itemRefs = useRef<(HTMLDivElement | null)[]>([]);
-  const dayLabelRef = useRef<HTMLDivElement>(null);
+  const lineRef = useRef<HTMLDivElement>(null);
   const headerRef = useRef<HTMLDivElement>(null);
+  const itemRefs = useRef<(HTMLDivElement | null)[]>([]);
+
+  const setItemRef = useCallback((el: HTMLDivElement | null, i: number) => {
+    itemRefs.current[i] = el;
+  }, []);
 
   useEffect(() => {
-    gsap.registerPlugin(ScrollTrigger);
+    const section = sectionRef.current;
+    if (!section) return;
+
+    const vh = window.innerHeight;
+    const pinDist = vh * 9;
+    const step = pinDist / SCHEDULE.length;
 
     const ctx = gsap.context(() => {
-      const section = sectionRef.current;
-      if (!section) return;
-
-      const scrollHeight = TIMELINE_ITEMS.length * 120;
-
-      // Header reveal
-      gsap.fromTo(
-        headerRef.current,
-        { opacity: 0, y: 30 },
-        {
-          opacity: 1,
-          y: 0,
-          duration: 0.9,
-          ease: "power3.out",
-          scrollTrigger: {
-            trigger: section,
-            start: "top 70%",
-          },
-        }
-      );
-
-      // Day label reveal
-      gsap.fromTo(
-        dayLabelRef.current,
-        { opacity: 0, x: -30 },
-        {
-          opacity: 1,
-          x: 0,
-          duration: 0.9,
-          ease: "power3.out",
-          scrollTrigger: {
-            trigger: section,
-            start: "top 70%",
-          },
-        }
-      );
-
-      // Pin the section
+      // Pin section for 900vh
       ScrollTrigger.create({
         trigger: section,
         start: "top top",
-        end: `+=${scrollHeight}px`,
+        end: `+=${pinDist}`,
         pin: true,
         pinSpacing: true,
       });
 
-      // Animate each timeline item
-      itemRefs.current.forEach((item, i) => {
-        if (!item) return;
-
-        gsap.fromTo(
-          item,
-          { opacity: 0, x: -40 },
-          {
-            opacity: 1,
-            x: 0,
-            duration: 0.6,
-            ease: "power2.out",
-            scrollTrigger: {
-              trigger: section,
-              start: `top+=${i * 120 - 60}px top`,
-              end: `top+=${i * 120 + 60}px top`,
-              scrub: false,
-              toggleActions: "play none none reverse",
-            },
-          }
-        );
+      // Header
+      gsap.from(headerRef.current, {
+        y: 24,
+        opacity: 0,
+        duration: 0.8,
+        ease: "power3.out",
+        scrollTrigger: {
+          trigger: section,
+          start: "top 70%",
+        },
       });
-    }, sectionRef);
+
+      // Vertical timeline line grows with scroll progress
+      gsap.fromTo(
+        lineRef.current,
+        { scaleY: 0 },
+        {
+          scaleY: 1,
+          transformOrigin: "top center",
+          ease: "none",
+          scrollTrigger: {
+            trigger: section,
+            start: "top top",
+            end: `+=${pinDist}`,
+            scrub: 0.4,
+          },
+        }
+      );
+
+      // Per-item reveal with current/past/future state
+      SCHEDULE.forEach((_, i) => {
+        const itemEl = itemRefs.current[i];
+        if (!itemEl) return;
+
+        // Set initial state: hidden off-left
+        gsap.set(itemEl, { x: -50, opacity: 0 });
+
+        const enterStart = i * step;
+        const enterEnd = (i + 1) * step;
+
+        ScrollTrigger.create({
+          trigger: section,
+          start: `top+=${enterStart} top`,
+          end: `top+=${enterEnd} top`,
+          onEnter: () => {
+            // Become active
+            gsap.to(itemEl, {
+              x: 0,
+              opacity: 1,
+              scale: 1.02,
+              duration: 0.5,
+              ease: "power2.out",
+              willChange: "transform",
+              onComplete: () => gsap.set(itemEl, { willChange: "auto" }),
+            });
+          },
+          onLeave: () => {
+            // Become past: dimmed
+            gsap.to(itemEl, {
+              opacity: 0.3,
+              scale: 1,
+              duration: 0.35,
+              ease: "power1.out",
+            });
+          },
+          onEnterBack: () => {
+            // Re-activate when scrolling back
+            gsap.to(itemEl, {
+              opacity: 1,
+              scale: 1.02,
+              duration: 0.4,
+              ease: "power2.out",
+            });
+            // Hide items ahead that had been revealed
+            for (let j = i + 1; j < SCHEDULE.length; j++) {
+              const nextEl = itemRefs.current[j];
+              if (nextEl) gsap.to(nextEl, { opacity: 0, x: -50, scale: 1, duration: 0.2 });
+            }
+          },
+          onLeaveBack: () => {
+            // Hide again when scrolling back before this item
+            gsap.to(itemEl, {
+              opacity: 0,
+              x: -50,
+              scale: 1,
+              duration: 0.3,
+              ease: "power1.in",
+            });
+          },
+        });
+      });
+    }, section);
 
     return () => ctx.revert();
   }, []);
@@ -108,133 +179,136 @@ export function Day1Section() {
   return (
     <section
       ref={sectionRef}
-      className="relative min-h-screen overflow-hidden"
-      style={{ background: "#000" }}
+      className="relative min-h-[100dvh] overflow-hidden"
+      style={{ background: "rgba(5,5,5,0.82)" }}
     >
-      {/* Subtle vertical lines decoration */}
-      <div
-        className="absolute inset-0 opacity-[0.03] pointer-events-none"
-        style={{
-          backgroundImage:
-            "repeating-linear-gradient(90deg, #9B8EC4 0px, #9B8EC4 1px, transparent 1px, transparent 120px)",
-        }}
-      />
-
-      <div
-        ref={wrapperRef}
-        className="relative z-10 max-w-6xl mx-auto px-8 py-20 min-h-screen flex"
-      >
+      <div className="relative z-10 max-w-5xl mx-auto px-8 py-20 min-h-[100dvh] flex gap-16">
         {/* Left: Day label */}
-        <div
-          ref={dayLabelRef}
-          className="flex-shrink-0 w-32 mr-16 flex flex-col pt-2"
-          style={{ opacity: 0 }}
-        >
+        <div className="flex-shrink-0 w-24 pt-1 flex flex-col">
           <p
-            className="text-xs tracking-[0.5em] uppercase mb-2"
-            style={{ color: "#9B8EC4" }}
+            className="font-label tracking-[0.5em] uppercase"
+            style={{ fontSize: "0.6rem", color: "#9B8EC4" }}
           >
             Day
           </p>
           <p
-            className="text-7xl font-bold"
-            style={{ color: "rgba(155,142,196,0.15)", lineHeight: 1 }}
+            className="font-display"
+            style={{ fontSize: "5rem", color: "rgba(155,142,196,0.1)", lineHeight: 1 }}
           >
             01
           </p>
-          <div
-            className="mt-4 w-px flex-1"
-            style={{
-              background:
-                "linear-gradient(to bottom, #9B8EC4, transparent)",
-              maxHeight: "200px",
-            }}
-          />
+          <p
+            className="font-label tracking-[0.35em] uppercase mt-2"
+            style={{ fontSize: "0.6rem", color: "rgba(240,238,245,0.25)" }}
+          >
+            May 22
+          </p>
         </div>
 
-        {/* Center: Header + Timeline */}
-        <div className="flex-1">
-          {/* Section header */}
-          <div ref={headerRef} className="mb-16" style={{ opacity: 0 }}>
+        {/* Right: timeline */}
+        <div className="flex-1 min-w-0">
+          {/* Header */}
+          <div ref={headerRef} className="mb-14" style={{ opacity: 0 }}>
             <p
-              className="text-xs tracking-[0.5em] uppercase mb-4"
-              style={{ color: "#9B8EC4" }}
+              className="font-label tracking-[0.5em] uppercase mb-3"
+              style={{ fontSize: "0.65rem", color: "#9B8EC4" }}
             >
-              May 22, 2026 · Agenda
+              May 22, 2026 · Full Day Schedule
             </p>
-            <h2 className="text-5xl sm:text-6xl font-bold uppercase tracking-[0.12em] text-white">
+            <h2
+              className="font-display leading-none"
+              style={{ fontSize: "clamp(3rem, 7vw, 7rem)", color: "#F0EEF5" }}
+            >
               Day 1
             </h2>
-            <p
-              className="text-sm tracking-[0.3em] uppercase mt-2 font-light"
-              style={{ color: "rgba(255,255,255,0.4)" }}
-            >
-              Full Day Schedule
-            </p>
           </div>
 
-          {/* Timeline */}
+          {/* Timeline wrapper */}
           <div className="relative">
             {/* Vertical line */}
             <div
-              className="absolute left-[5px] top-0 bottom-0 w-px"
+              ref={lineRef}
+              className="absolute left-0 top-0 bottom-0"
               style={{
-                background:
-                  "linear-gradient(to bottom, #9B8EC4, rgba(155,142,196,0.1))",
+                width: "1px",
+                background: "linear-gradient(to bottom, #9B8EC4, rgba(155,142,196,0.15))",
+                transformOrigin: "top",
               }}
             />
 
             {/* Items */}
-            <div className="flex flex-col gap-1">
-              {TIMELINE_ITEMS.map((item, i) => (
+            <div className="flex flex-col pl-8">
+              {SCHEDULE.map((item, i) => (
                 <div
                   key={i}
-                  ref={(el) => {
-                    itemRefs.current[i] = el;
-                  }}
-                  className="relative flex items-center gap-6 py-3"
-                  style={{ opacity: 0 }}
+                  ref={(el) => setItemRef(el, i)}
+                  className="relative py-4 flex items-start gap-5"
                 >
-                  {/* Dot */}
+                  {/* Dot on timeline */}
                   <div
-                    className="flex-shrink-0 w-[11px] h-[11px] rounded-full border relative z-10"
-                    style={{
-                      borderColor: item.isAnchor ? "#9B8EC4" : "rgba(155,142,196,0.4)",
-                      background: item.isAnchor ? "#9B8EC4" : "transparent",
-                    }}
-                  />
+                    className="absolute -left-8 top-[22px] -translate-x-[4.5px] flex-shrink-0"
+                    style={{ width: "9px", height: "9px" }}
+                  >
+                    <div
+                      style={{
+                        width: "9px",
+                        height: "9px",
+                        borderRadius: "50%",
+                        border: `1px solid ${item.isAnchor ? "#9B8EC4" : "rgba(155,142,196,0.4)"}`,
+                        background: item.isAnchor ? "#9B8EC4" : "transparent",
+                      }}
+                    />
+                  </div>
 
                   {/* Content */}
-                  <div className="flex items-baseline gap-4">
-                    {item.time && (
+                  <div className="min-w-0">
+                    <div className="flex items-baseline gap-4 flex-wrap">
+                      {item.time && (
+                        <span
+                          className="font-label tracking-[0.2em] flex-shrink-0"
+                          style={{ fontSize: "0.78rem", color: "#9B8EC4" }}
+                        >
+                          {item.time}
+                        </span>
+                      )}
                       <span
-                        className="text-sm font-mono tracking-[0.2em]"
-                        style={{ color: "#9B8EC4", minWidth: "52px" }}
+                        className={`font-display leading-none ${item.isBreak ? "" : ""}`}
+                        style={{
+                          fontSize: item.isAnchor
+                            ? "clamp(1.6rem, 3vw, 2.4rem)"
+                            : item.isBreak
+                            ? "1.1rem"
+                            : "clamp(1.4rem, 2.5vw, 2rem)",
+                          color: item.isBreak
+                            ? "rgba(240,238,245,0.3)"
+                            : item.isAnchor
+                            ? "#F0EEF5"
+                            : "#F0EEF5",
+                          letterSpacing: item.isBreak ? "0.35em" : "0.06em",
+                        }}
                       >
-                        {item.time}
+                        {item.label}
                       </span>
+                    </div>
+
+                    {item.subs.length > 0 && (
+                      <div className="mt-1.5 flex flex-wrap gap-x-4 gap-y-0.5">
+                        {item.subs.map((sub, j) => (
+                          <span
+                            key={j}
+                            className="font-label"
+                            style={{
+                              fontSize: "0.65rem",
+                              color: "rgba(155,142,196,0.6)",
+                              letterSpacing: "0.25em",
+                              textTransform: "uppercase",
+                            }}
+                          >
+                            {sub}
+                          </span>
+                        ))}
+                      </div>
                     )}
-                    <span
-                      className={`uppercase tracking-[0.18em] font-${
-                        item.isAnchor ? "semibold" : "light"
-                      } ${
-                        item.isBreak
-                          ? "text-sm"
-                          : item.isAnchor
-                          ? "text-2xl"
-                          : "text-base"
-                      }`}
-                      style={{
-                        color: item.isAnchor
-                          ? "#fff"
-                          : item.isBreak
-                          ? "rgba(255,255,255,0.3)"
-                          : "rgba(255,255,255,0.75)",
-                        marginLeft: !item.time ? "68px" : "0",
-                      }}
-                    >
-                      {item.label}
-                    </span>
                   </div>
                 </div>
               ))}
