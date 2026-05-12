@@ -7,9 +7,10 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { MotionPathPlugin } from "gsap/MotionPathPlugin";
 import { scrollState } from "@/lib/scrollState";
 
+gsap.registerPlugin(ScrollTrigger, MotionPathPlugin);
+
 export function LenisProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
-    gsap.registerPlugin(ScrollTrigger, MotionPathPlugin);
 
     const lenis = new Lenis({
       duration: 1.4,
