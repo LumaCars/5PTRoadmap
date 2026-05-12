@@ -16,38 +16,58 @@ const SCHEDULE: ScheduleItem[] = [
   { time: "09:00", label: "COME TOGETHER", subs: [], isAnchor: true },
   {
     time: "09:15",
-    label: "BB FUNCTIONS",
+    label: "BORDERLESS BANKING FUNCTIONS",
     subs: ["Platform Overview", "Banking Features", "Crypto Integration", "Card Infrastructure"],
   },
   {
     time: null,
-    label: "BB LEGAL STRUCTURE",
+    label: "BORDERLESS BANKING LEGAL STRUCTURE",
     subs: ["International Structure", "Compliance", "Licensing"],
   },
   { time: null, label: "Q&A SESSION", subs: [] },
   { time: null, label: "BREAK", subs: [], isBreak: true },
   {
     time: null,
-    label: "SERIAL NUMBERS",
+    label: "BORDERLESS BANKING SERIAL NUMBERS",
     subs: ["Limited Editions", "High-End Numbering", "Collector Concepts"],
   },
   {
     time: null,
-    label: "CARD DESIGN",
+    label: "BORDERLESS BANKING CARD DESIGN & MANUFACTURING",
     subs: ["Metal Cards", "Diamond Cards", "Luxury Production"],
   },
-  { time: null, label: "LEDGER PHONE BB", subs: ["Secure Device", "Self Custody"] },
-  { time: null, label: "PORSCHE DRIVE BB", subs: ["Mobility", "Luxury Integration"] },
-  { time: null, label: "Q&A SESSION", subs: [] },
-  { time: null, label: "BREAK", subs: [], isBreak: true },
-  { time: null, label: "WHITE LABEL BB", subs: ["Partner Structure", "Revenue Streams"] },
-  { time: null, label: "MINING", subs: ["Infrastructure", "Revenue Models"] },
   {
     time: null,
-    label: "WATER PROJECT",
+    label: "BORDERLESS BANKING LEDGER PHONE",
+    subs: ["Secure Device", "Self Custody"],
+  },
+  {
+    time: null,
+    label: "BORDERLESS BANKING PORSCHE DRIVE",
+    subs: ["Mobility", "Luxury Integration"],
+  },
+  { time: null, label: "Q&A SESSION", subs: [] },
+  { time: null, label: "BREAK", subs: [], isBreak: true },
+  {
+    time: null,
+    label: "BORDERLESS BANKING WHITE LABEL",
+    subs: ["Partner Structure", "Revenue Streams"],
+  },
+  {
+    time: null,
+    label: "BORDERLESS BANKING MINING",
+    subs: ["Infrastructure", "Revenue Models"],
+  },
+  {
+    time: null,
+    label: "BORDERLESS BANKING WATER PROJECT",
     subs: ["Infrastructure", "International Expansion"],
   },
-  { time: null, label: "TRADING", subs: ["Market Concepts", "Opportunities"] },
+  {
+    time: null,
+    label: "BORDERLESS BANKING TRADING",
+    subs: ["Market Concepts", "Opportunities"],
+  },
   { time: null, label: "Q&A SESSION", subs: [] },
   { time: "17:00", label: "FINISH", subs: [], isAnchor: true },
 ];
@@ -148,138 +168,107 @@ export function Day1Section() {
       className="relative min-h-[100dvh] overflow-hidden"
       style={{ background: "rgba(5,5,5,0.82)" }}
     >
-      <div className="relative z-10 max-w-5xl mx-auto px-8 py-20 min-h-[100dvh] flex gap-16">
-        {/* Left: Day label */}
-        <div className="flex-shrink-0 w-24 pt-1 flex flex-col">
+      <div className="relative z-10 max-w-3xl mx-auto px-10 min-h-[100dvh] flex flex-col justify-center py-20">
+        {/* Header — centered */}
+        <div ref={headerRef} className="mb-16 text-center" style={{ opacity: 0 }}>
           <p
-            className="font-label tracking-[0.5em] uppercase"
-            style={{ fontSize: "0.6rem", color: "#9B8EC4" }}
+            className="font-label tracking-[0.5em] uppercase mb-3"
+            style={{ fontSize: "0.65rem", color: "#9B8EC4" }}
           >
-            Day
+            Day 01 &nbsp;·&nbsp; May 22, 2026 &nbsp;·&nbsp; Full Day Schedule
           </p>
-          <p
-            className="font-display"
-            style={{ fontSize: "5rem", color: "rgba(155,142,196,0.1)", lineHeight: 1 }}
+          <h2
+            className="font-display leading-none"
+            style={{ fontSize: "clamp(3rem, 7vw, 7rem)", color: "#F0EEF5" }}
           >
-            01
-          </p>
-          <p
-            className="font-label tracking-[0.35em] uppercase mt-2"
-            style={{ fontSize: "0.6rem", color: "rgba(240,238,245,0.25)" }}
-          >
-            May 22
-          </p>
+            Day 1
+          </h2>
         </div>
 
-        {/* Right: timeline */}
-        <div className="flex-1 min-w-0">
-          {/* Header */}
-          <div ref={headerRef} className="mb-14" style={{ opacity: 0 }}>
-            <p
-              className="font-label tracking-[0.5em] uppercase mb-3"
-              style={{ fontSize: "0.65rem", color: "#9B8EC4" }}
-            >
-              May 22, 2026 · Full Day Schedule
-            </p>
-            <h2
-              className="font-display leading-none"
-              style={{ fontSize: "clamp(3rem, 7vw, 7rem)", color: "#F0EEF5" }}
-            >
-              Day 1
-            </h2>
-          </div>
+        {/* Timeline — items are absolutely stacked so each gets the full container.
+            Only the active item is visible at a time, no overflow clipping issues. */}
+        <div className="relative" style={{ minHeight: "50vh" }}>
+          {/* Vertical line */}
+          <div
+            ref={lineRef}
+            className="absolute left-0 top-0 bottom-0"
+            style={{
+              width: "1px",
+              background: "linear-gradient(to bottom, #9B8EC4, rgba(155,142,196,0.15))",
+              transformOrigin: "top",
+            }}
+          />
 
-          {/* Timeline wrapper */}
-          <div className="relative">
-            {/* Vertical line */}
+          {SCHEDULE.map((item, i) => (
             <div
-              ref={lineRef}
-              className="absolute left-0 top-0 bottom-0"
-              style={{
-                width: "1px",
-                background: "linear-gradient(to bottom, #9B8EC4, rgba(155,142,196,0.15))",
-                transformOrigin: "top",
-              }}
-            />
-
-            {/* Items */}
-            <div className="flex flex-col pl-8">
-              {SCHEDULE.map((item, i) => (
+              key={i}
+              ref={(el) => setItemRef(el, i)}
+              className="absolute inset-0 flex flex-col justify-center pl-12"
+              style={{ opacity: 0 }}
+            >
+              {/* Timeline dot */}
+              <div
+                className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-[4.5px]"
+                style={{ width: "9px", height: "9px", flexShrink: 0 }}
+              >
                 <div
-                  key={i}
-                  ref={(el) => setItemRef(el, i)}
-                  className="relative py-4 flex items-start gap-5"
-                >
-                  {/* Dot on timeline */}
-                  <div
-                    className="absolute -left-8 top-[22px] -translate-x-[4.5px] flex-shrink-0"
-                    style={{ width: "9px", height: "9px" }}
+                  style={{
+                    width: "9px",
+                    height: "9px",
+                    borderRadius: "50%",
+                    border: `1px solid ${item.isAnchor ? "#9B8EC4" : "rgba(155,142,196,0.5)"}`,
+                    background: item.isAnchor ? "#9B8EC4" : "transparent",
+                  }}
+                />
+              </div>
+
+              {/* Time + label row */}
+              <div className="flex items-baseline gap-5 flex-wrap mb-4">
+                {item.time && (
+                  <span
+                    className="font-label tracking-[0.2em] flex-shrink-0"
+                    style={{ fontSize: "1rem", color: "#9B8EC4" }}
                   >
-                    <div
+                    {item.time}
+                  </span>
+                )}
+                <span
+                  className="font-display leading-none"
+                  style={{
+                    fontSize: item.isAnchor
+                      ? "clamp(2rem, 4.5vw, 4rem)"
+                      : item.isBreak
+                      ? "1.4rem"
+                      : "clamp(1.6rem, 3.5vw, 3rem)",
+                    color: item.isBreak ? "rgba(240,238,245,0.35)" : "#F0EEF5",
+                    letterSpacing: item.isBreak ? "0.35em" : "0.06em",
+                  }}
+                >
+                  {item.label}
+                </span>
+              </div>
+
+              {/* Sub-items */}
+              {item.subs.length > 0 && (
+                <div className="flex flex-wrap gap-x-6 gap-y-1.5">
+                  {item.subs.map((sub, j) => (
+                    <span
+                      key={j}
+                      className="font-label"
                       style={{
-                        width: "9px",
-                        height: "9px",
-                        borderRadius: "50%",
-                        border: `1px solid ${item.isAnchor ? "#9B8EC4" : "rgba(155,142,196,0.4)"}`,
-                        background: item.isAnchor ? "#9B8EC4" : "transparent",
+                        fontSize: "0.8rem",
+                        color: "rgba(155,142,196,0.7)",
+                        letterSpacing: "0.25em",
+                        textTransform: "uppercase",
                       }}
-                    />
-                  </div>
-
-                  {/* Content */}
-                  <div className="min-w-0">
-                    <div className="flex items-baseline gap-4 flex-wrap">
-                      {item.time && (
-                        <span
-                          className="font-label tracking-[0.2em] flex-shrink-0"
-                          style={{ fontSize: "0.78rem", color: "#9B8EC4" }}
-                        >
-                          {item.time}
-                        </span>
-                      )}
-                      <span
-                        className={`font-display leading-none ${item.isBreak ? "" : ""}`}
-                        style={{
-                          fontSize: item.isAnchor
-                            ? "clamp(1.6rem, 3vw, 2.4rem)"
-                            : item.isBreak
-                            ? "1.1rem"
-                            : "clamp(1.4rem, 2.5vw, 2rem)",
-                          color: item.isBreak
-                            ? "rgba(240,238,245,0.3)"
-                            : item.isAnchor
-                            ? "#F0EEF5"
-                            : "#F0EEF5",
-                          letterSpacing: item.isBreak ? "0.35em" : "0.06em",
-                        }}
-                      >
-                        {item.label}
-                      </span>
-                    </div>
-
-                    {item.subs.length > 0 && (
-                      <div className="mt-1.5 flex flex-wrap gap-x-4 gap-y-0.5">
-                        {item.subs.map((sub, j) => (
-                          <span
-                            key={j}
-                            className="font-label"
-                            style={{
-                              fontSize: "0.65rem",
-                              color: "rgba(155,142,196,0.6)",
-                              letterSpacing: "0.25em",
-                              textTransform: "uppercase",
-                            }}
-                          >
-                            {sub}
-                          </span>
-                        ))}
-                      </div>
-                    )}
-                  </div>
+                    >
+                      {sub}
+                    </span>
+                  ))}
                 </div>
-              ))}
+              )}
             </div>
-          </div>
+          ))}
         </div>
       </div>
     </section>

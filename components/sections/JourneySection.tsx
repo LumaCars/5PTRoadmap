@@ -92,12 +92,12 @@ export function JourneySection() {
       ref={sectionRef}
       className="relative min-h-[100dvh] flex flex-col items-center justify-center overflow-hidden"
     >
-      <div className="relative z-10 w-full max-w-5xl px-8 py-16">
+      <div className="relative z-10 w-full max-w-6xl px-10 py-16 flex flex-col items-center">
         {/* Section label */}
-        <div ref={titleRef} className="mb-12 text-center" style={{ opacity: 0 }}>
+        <div ref={titleRef} className="mb-16 text-center" style={{ opacity: 0 }}>
           <p
             className="font-label tracking-[0.5em] uppercase mb-3"
-            style={{ fontSize: "0.7rem", color: "#9B8EC4" }}
+            style={{ fontSize: "0.75rem", color: "#9B8EC4" }}
           >
             The Journey
           </p>
@@ -109,119 +109,103 @@ export function JourneySection() {
           </h2>
         </div>
 
-        {/* Flight path */}
-        <div className="relative w-full" style={{ height: "280px" }}>
+        {/* City panels + arc — flex row */}
+        <div className="flex items-center w-full gap-10 mb-14">
           {/* Left: MUC */}
-          <div
-            ref={leftRef}
-            className="absolute left-0 top-1/2 -translate-y-1/2"
-            style={{ opacity: 0 }}
-          >
+          <div ref={leftRef} className="flex-shrink-0 w-56" style={{ opacity: 0 }}>
             <p
               className="font-display leading-none"
-              style={{ fontSize: "clamp(2.5rem, 5vw, 4.5rem)", color: "#F0EEF5" }}
+              style={{ fontSize: "clamp(3rem, 5vw, 5rem)", color: "#F0EEF5" }}
             >
               MUC
             </p>
             <p
-              className="font-label tracking-[0.3em] uppercase mt-1"
-              style={{ fontSize: "0.65rem", color: "#9B8EC4" }}
+              className="font-label tracking-[0.3em] uppercase mt-3"
+              style={{ fontSize: "1rem", color: "#9B8EC4" }}
             >
-              München
+              MÜNCHEN
             </p>
             <p
-              className="font-label tracking-[0.25em] uppercase mt-3"
-              style={{ fontSize: "0.65rem", color: "rgba(240,238,245,0.4)" }}
+              className="font-label tracking-[0.28em] uppercase mt-4"
+              style={{ fontSize: "0.9rem", color: "#F0EEF5" }}
             >
-              May 22 · Departure
-            </p>
-          </div>
-
-          {/* Right: DXB */}
-          <div
-            ref={rightRef}
-            className="absolute right-0 top-1/2 -translate-y-1/2 text-right"
-            style={{ opacity: 0 }}
-          >
-            <p
-              className="font-display leading-none"
-              style={{ fontSize: "clamp(2.5rem, 5vw, 4.5rem)", color: "#F0EEF5" }}
-            >
-              DXB
-            </p>
-            <p
-              className="font-label tracking-[0.3em] uppercase mt-1"
-              style={{ fontSize: "0.65rem", color: "#9B8EC4" }}
-            >
-              Dubai
-            </p>
-            <p
-              className="font-label tracking-[0.25em] uppercase mt-3"
-              style={{ fontSize: "0.65rem", color: "rgba(240,238,245,0.4)" }}
-            >
-              Arrival · 23:40
+              MAY 22 · DEPARTURE
             </p>
           </div>
 
           {/* SVG arc */}
-          <svg
-            className="absolute inset-0 w-full h-full"
-            viewBox="0 0 950 280"
-            preserveAspectRatio="xMidYMid meet"
-            fill="none"
-            overflow="visible"
-          >
-            {/* Ghost dashed background */}
-            <path
-              d={ARC_PATH}
-              stroke="rgba(155,142,196,0.18)"
-              strokeWidth="1.5"
-              strokeDasharray="5 5"
+          <div className="flex-1 relative" style={{ height: "190px" }}>
+            <svg
+              className="absolute inset-0 w-full h-full"
+              viewBox="0 0 950 280"
+              preserveAspectRatio="xMidYMid meet"
               fill="none"
-            />
-
-            {/* Animated stroke */}
-            <path
-              id="journey-arc"
-              ref={arcRef}
-              d={ARC_PATH}
-              stroke="#9B8EC4"
-              strokeWidth="1.5"
-              strokeLinecap="round"
-              fill="none"
-            />
-
-            {/* City dots */}
-            <circle cx="80" cy="230" r="4" fill="#9B8EC4" />
-            <circle cx="870" cy="230" r="4" fill="#9B8EC4" />
-
-            {/* Plane — starts at MUC */}
-            <g ref={planeRef} style={{ transform: "translate(80px,230px)" }}>
-              <g transform="scale(0.7)">
-                <path
-                  d="M0 -9 L5 6 L0 3 L-5 6 Z"
-                  fill="#F0EEF5"
-                />
+              overflow="visible"
+            >
+              <path
+                d={ARC_PATH}
+                stroke="rgba(155,142,196,0.18)"
+                strokeWidth="1.5"
+                strokeDasharray="5 5"
+                fill="none"
+              />
+              <path
+                id="journey-arc"
+                ref={arcRef}
+                d={ARC_PATH}
+                stroke="#9B8EC4"
+                strokeWidth="1.5"
+                strokeLinecap="round"
+                fill="none"
+              />
+              <circle cx="80" cy="230" r="4" fill="#9B8EC4" />
+              <circle cx="870" cy="230" r="4" fill="#9B8EC4" />
+              <g ref={planeRef} style={{ transform: "translate(80px,230px)" }}>
+                <g transform="scale(0.7)">
+                  <path d="M0 -9 L5 6 L0 3 L-5 6 Z" fill="#F0EEF5" />
+                </g>
               </g>
-            </g>
-          </svg>
+            </svg>
+          </div>
+
+          {/* Right: DXB */}
+          <div ref={rightRef} className="flex-shrink-0 w-56 text-right" style={{ opacity: 0 }}>
+            <p
+              className="font-display leading-none"
+              style={{ fontSize: "clamp(3rem, 5vw, 5rem)", color: "#F0EEF5" }}
+            >
+              DXB
+            </p>
+            <p
+              className="font-label tracking-[0.3em] uppercase mt-3"
+              style={{ fontSize: "1rem", color: "#9B8EC4" }}
+            >
+              DUBAI
+            </p>
+            <p
+              className="font-label tracking-[0.28em] uppercase mt-4"
+              style={{ fontSize: "0.9rem", color: "#F0EEF5" }}
+            >
+              ARRIVAL · 23:40
+            </p>
+          </div>
         </div>
 
-        {/* Footer label */}
+        {/* Footer */}
         <motion.div
-          className="mt-10 flex items-center justify-center gap-4"
+          className="flex items-center justify-center gap-5"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 0.6, duration: 0.8 }}
         >
-          <div className="w-12 h-px" style={{ background: "rgba(155,142,196,0.35)" }} />
+          <div className="w-16 h-px" style={{ background: "rgba(155,142,196,0.35)" }} />
           <span
             className="font-label tracking-[0.4em] uppercase"
-            style={{ fontSize: "0.65rem", color: "rgba(240,238,245,0.35)" }}
+            style={{ fontSize: "0.85rem", color: "rgba(240,238,245,0.6)" }}
           >
-            Flight Duration approx. 6h
+            FLIGHT DURATION APPROX. 6H
           </span>
-          <div className="w-12 h-px" style={{ background: "rgba(155,142,196,0.35)" }} />
+          <div className="w-16 h-px" style={{ background: "rgba(155,142,196,0.35)" }} />
         </motion.div>
       </div>
     </section>
