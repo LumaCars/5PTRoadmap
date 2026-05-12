@@ -17,6 +17,9 @@
 html {
   scroll-behavior: auto;
   overflow-x: hidden;
+  width: 100%;
+  margin: 0;
+  padding: 0;
 }
 
 body {
@@ -24,6 +27,9 @@ body {
   color: #F0EEF5;
   font-family: var(--font-dm-mono), "DM Mono", monospace;
   overflow-x: hidden;
+  width: 100%;
+  margin: 0;
+  padding: 0;
 }
 
 ::-webkit-scrollbar {

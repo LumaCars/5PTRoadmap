@@ -29,16 +29,21 @@ export function SpaceCanvas() {
       <div
         style={{
           position: "fixed",
-          inset: 0,
+          top: 0,
+          left: 0,
+          width: "100vw",
+          height: "100vh",
           zIndex: 0,
           pointerEvents: "none",
+          margin: 0,
+          padding: 0,
         }}
       >
         <Canvas
           camera={{ position: [0, 0, 500], fov: 60, near: 0.1, far: 5000 }}
           dpr={[1, 1.5]}
           gl={{ antialias: false, alpha: false }}
-          style={{ background: "#050505" }}
+          style={{ background: "#050505", width: "100%", height: "100%", display: "block" }}
         >
           <Suspense fallback={null}>
             <StarField />
