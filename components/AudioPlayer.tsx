@@ -1,6 +1,7 @@
 "use client";
 
 import { useRef, useState, useEffect, useCallback } from "react";
+import { markInteracted } from "@/lib/audioInteraction";
 
 const AUDIO_URL =
   "https://d6gmlk5qn4ikdodg.public.blob.vercel-storage.com/Track.mp3";
@@ -19,6 +20,7 @@ export function AudioPlayer() {
     if (!audio) return;
 
     startedRef.current = true;
+    markInteracted();
     audio.volume = 0;
 
     audio.play().catch(() => {
