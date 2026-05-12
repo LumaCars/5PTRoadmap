@@ -36,17 +36,21 @@ export function JourneySection() {
 
       // Section label + city names stagger in
       const textEls = [titleRef.current, leftRef.current, rightRef.current];
-      gsap.from(textEls, {
-        y: 30,
-        opacity: 0,
-        duration: 0.7,
-        stagger: 0.08,
-        ease: "cubic-bezier(0.23,1,0.32,1)",
-        scrollTrigger: {
-          trigger: section,
-          start: "top 80%",
-        },
-      });
+      gsap.fromTo(
+        textEls,
+        { y: 30, opacity: 0 },
+        {
+          y: 0,
+          opacity: 1,
+          duration: 0.7,
+          stagger: 0.08,
+          ease: "cubic-bezier(0.23,1,0.32,1)",
+          scrollTrigger: {
+            trigger: section,
+            start: "top 80%",
+          },
+        }
+      );
 
       // Stroke draw
       const len = arc.getTotalLength();

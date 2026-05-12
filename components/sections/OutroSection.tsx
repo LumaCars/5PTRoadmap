@@ -58,15 +58,17 @@ export function OutroSection() {
         "-=0.6"
       );
 
-      tl.from(
+      tl.fromTo(
         subRef.current,
-        { opacity: 0, y: 12, duration: 0.7, ease: "power2.out" },
+        { opacity: 0, y: 12 },
+        { opacity: 1, y: 0, duration: 0.7, ease: "power2.out" },
         "+=0.2"
       );
 
-      tl.from(
+      tl.fromTo(
         datesRef.current,
-        { opacity: 0, y: 10, duration: 0.6, ease: "power2.out" },
+        { opacity: 0, y: 10 },
+        { opacity: 1, y: 0, duration: 0.6, ease: "power2.out" },
         "-=0.2"
       );
     }, section);

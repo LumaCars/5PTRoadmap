@@ -49,17 +49,21 @@ export function EveningSection() {
       });
 
       const textEls = [timeRef.current, titleRef.current, subRef.current];
-      gsap.from(textEls, {
-        y: 24,
-        opacity: 0,
-        duration: 0.8,
-        stagger: 0.12,
-        ease: "power3.out",
-        scrollTrigger: {
-          trigger: section,
-          start: "top 70%",
-        },
-      });
+      gsap.fromTo(
+        textEls,
+        { y: 24, opacity: 0 },
+        {
+          y: 0,
+          opacity: 1,
+          duration: 0.8,
+          stagger: 0.12,
+          ease: "power3.out",
+          scrollTrigger: {
+            trigger: section,
+            start: "top 70%",
+          },
+        }
+      );
     }, section);
 
     return () => ctx.revert();

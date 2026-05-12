@@ -68,31 +68,25 @@ export function Day1Section() {
 
     const vh = window.innerHeight;
     const pinDist = vh * 9;
-    const step = pinDist / SCHEDULE.length;
 
     const ctx = gsap.context(() => {
-      // Pin section for 900vh
-      ScrollTrigger.create({
-        trigger: section,
-        start: "top top",
-        end: `+=${pinDist}`,
-        pin: true,
-        pinSpacing: true,
-      });
+      // Header — fromTo so the explicit opacity:1 target is used
+      gsap.fromTo(
+        headerRef.current,
+        { y: 24, opacity: 0 },
+        {
+          y: 0,
+          opacity: 1,
+          duration: 0.8,
+          ease: "power3.out",
+          scrollTrigger: {
+            trigger: section,
+            start: "top 70%",
+          },
+        }
+      );
 
-      // Header
-      gsap.from(headerRef.current, {
-        y: 24,
-        opacity: 0,
-        duration: 0.8,
-        ease: "power3.out",
-        scrollTrigger: {
-          trigger: section,
-          start: "top 70%",
-        },
-      });
-
-      // Vertical timeline line grows with scroll progress
+      // Vertical line grows alongside scroll progress through the pin
       gsap.fromTo(
         lineRef.current,
         { scaleY: 0 },
@@ -109,67 +103,39 @@ export function Day1Section() {
         }
       );
 
-      // Per-item reveal with current/past/future state
+      // Set all items hidden up front
+      itemRefs.current.forEach((el) => {
+        if (el) gsap.set(el, { x: -50, opacity: 0 });
+      });
+
+      // Build a timeline that reveals items one-by-one, then scrub it across the pin.
+      // Using a timeline + scrub avoids the "pinned element position = 0" measurement
+      // problem that makes individual per-item ScrollTriggers unreliable.
+      const itemTl = gsap.timeline();
       SCHEDULE.forEach((_, i) => {
         const itemEl = itemRefs.current[i];
         if (!itemEl) return;
+        // Slide-in the current item
+        itemTl.to(
+          itemEl,
+          { x: 0, opacity: 1, scale: 1.02, duration: 0.5, ease: "power2.out" },
+          i
+        );
+        // Dim the previous item as the next one arrives
+        if (i > 0) {
+          const prevEl = itemRefs.current[i - 1];
+          if (prevEl) itemTl.to(prevEl, { opacity: 0.3, scale: 1, duration: 0.3 }, i);
+        }
+      });
 
-        // Set initial state: hidden off-left
-        gsap.set(itemEl, { x: -50, opacity: 0 });
-
-        const enterStart = i * step;
-        const enterEnd = (i + 1) * step;
-
-        ScrollTrigger.create({
-          trigger: section,
-          start: `top+=${enterStart} top`,
-          end: `top+=${enterEnd} top`,
-          onEnter: () => {
-            // Become active
-            gsap.to(itemEl, {
-              x: 0,
-              opacity: 1,
-              scale: 1.02,
-              duration: 0.5,
-              ease: "power2.out",
-              willChange: "transform",
-              onComplete: () => gsap.set(itemEl, { willChange: "auto" }),
-            });
-          },
-          onLeave: () => {
-            // Become past: dimmed
-            gsap.to(itemEl, {
-              opacity: 0.3,
-              scale: 1,
-              duration: 0.35,
-              ease: "power1.out",
-            });
-          },
-          onEnterBack: () => {
-            // Re-activate when scrolling back
-            gsap.to(itemEl, {
-              opacity: 1,
-              scale: 1.02,
-              duration: 0.4,
-              ease: "power2.out",
-            });
-            // Hide items ahead that had been revealed
-            for (let j = i + 1; j < SCHEDULE.length; j++) {
-              const nextEl = itemRefs.current[j];
-              if (nextEl) gsap.to(nextEl, { opacity: 0, x: -50, scale: 1, duration: 0.2 });
-            }
-          },
-          onLeaveBack: () => {
-            // Hide again when scrolling back before this item
-            gsap.to(itemEl, {
-              opacity: 0,
-              x: -50,
-              scale: 1,
-              duration: 0.3,
-              ease: "power1.in",
-            });
-          },
-        });
+      ScrollTrigger.create({
+        trigger: section,
+        start: "top top",
+        end: `+=${pinDist}`,
+        pin: true,
+        pinSpacing: true,
+        scrub: 0.5,
+        animation: itemTl,
       });
     }, section);
 
