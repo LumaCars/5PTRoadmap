@@ -78,6 +78,7 @@ const PIN_VH = 180;        // vh per item
 export function Day1Section() {
   const sectionRef = useRef<HTMLElement>(null);
   const progressRef = useRef<HTMLDivElement>(null);
+  const progressTrackRef = useRef<HTMLDivElement>(null);
   const itemRefs = useRef<(HTMLDivElement | null)[]>([]);
   const swipeRef = useRef<HTMLAudioElement | null>(null);
 
@@ -144,6 +145,13 @@ export function Day1Section() {
         { scaleX: 0 },
         { scaleX: 1, duration: N, ease: "none" },
         0
+      );
+
+      // Fade out the entire progress bar (track + fill) near the end
+      tl.to(
+        progressTrackRef.current,
+        { opacity: 0, duration: 0.5, ease: "power2.out" },
+        N - 0.5
       );
 
       ScrollTrigger.create({
@@ -288,8 +296,9 @@ export function Day1Section() {
         ))}
       </div>
 
-      {/* Progress bar — lavender, scaleX 0→1 */}
+      {/* Progress bar — lavender, scaleX 0→1, fades out when complete */}
       <div
+        ref={progressTrackRef}
         style={{
           position: "absolute",
           bottom: 0,
