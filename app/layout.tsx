@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import { Bebas_Neue, DM_Mono } from "next/font/google";
 import "./globals.css";
-import { LenisProvider } from "@/components/providers/LenisProvider";
 
 const bebasNeue = Bebas_Neue({
   subsets: ["latin"],
@@ -31,7 +30,7 @@ export default function RootLayout({
   return (
     <html lang="en" className={`${bebasNeue.variable} ${dmMono.variable}`}>
       <body>
-        <LenisProvider>{children}</LenisProvider>
+        {children}
       </body>
     </html>
   );
