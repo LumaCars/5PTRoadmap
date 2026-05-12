@@ -95,7 +95,7 @@ export function OutroSection() {
       <div
         className="absolute inset-0 z-0"
         style={{
-          backgroundImage: "url('/bg-space.jpg')",
+          backgroundImage: "url('/5pt space.png')",
           backgroundSize: "cover",
           backgroundPosition: "center bottom",
           backgroundRepeat: "no-repeat",
@@ -119,7 +119,7 @@ export function OutroSection() {
         {/* Logo */}
         <div ref={logoRef} className="mb-10" style={{ opacity: 0 }}>
           <Image
-            src="/5pt-logo.png"
+            src="/5pt logo .png"
             alt="5PT"
             width={140}
             height={70}

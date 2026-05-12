@@ -95,7 +95,7 @@ export function IntroSection() {
       <div
         className="absolute inset-0 z-0"
         style={{
-          backgroundImage: "url('/bg-space.jpg')",
+          backgroundImage: "url('/5pt space.png')",
           backgroundSize: "cover",
           backgroundPosition: "center",
           backgroundRepeat: "no-repeat",
@@ -109,7 +109,7 @@ export function IntroSection() {
         {/* Logo */}
         <div ref={logoRef} className="mb-12" style={{ opacity: 0 }}>
           <Image
-            src="/5pt-logo.png"
+            src="/5pt logo .png"
             alt="5PT"
             width={180}
             height={90}
