@@ -9,11 +9,10 @@ interface ScheduleItem {
   label: string;
   subs: string[];
   isBreak?: boolean;
-  isAnchor?: boolean;
 }
 
 const SCHEDULE: ScheduleItem[] = [
-  { time: "09:00", label: "COME TOGETHER", subs: [], isAnchor: true },
+  { time: "09:00", label: "COME TOGETHER", subs: [] },
   {
     time: "09:15",
     label: "BORDERLESS BANKING FUNCTIONS",
@@ -22,60 +21,62 @@ const SCHEDULE: ScheduleItem[] = [
   {
     time: null,
     label: "BORDERLESS BANKING LEGAL STRUCTURE",
-    subs: ["International Structure", "Compliance", "Licensing"],
+    subs: ["International Structure", "Compliance & Regulations", "Licensing Overview"],
   },
   { time: null, label: "Q&A SESSION", subs: [] },
-  { time: null, label: "BREAK", subs: [], isBreak: true },
+  { time: null, label: "— BREAK —", subs: [], isBreak: true },
   {
     time: null,
     label: "BORDERLESS BANKING SERIAL NUMBERS",
-    subs: ["Limited Editions", "High-End Numbering", "Collector Concepts"],
+    subs: ["Limited Editions", "High-End Numbering System", "Collector Concepts"],
   },
   {
     time: null,
     label: "BORDERLESS BANKING CARD DESIGN & MANUFACTURING",
-    subs: ["Metal Cards", "Diamond Cards", "Luxury Production"],
+    subs: ["Metal Cards", "Diamond Cards", "Luxury Production Process"],
   },
   {
     time: null,
     label: "BORDERLESS BANKING LEDGER PHONE",
-    subs: ["Secure Device", "Self Custody"],
+    subs: ["Secure Device Concept", "Self Custody & Security"],
   },
   {
     time: null,
     label: "BORDERLESS BANKING PORSCHE DRIVE",
-    subs: ["Mobility", "Luxury Integration"],
+    subs: ["Mobility & Luxury Integration", "Partnership Concepts"],
   },
   { time: null, label: "Q&A SESSION", subs: [] },
-  { time: null, label: "BREAK", subs: [], isBreak: true },
+  { time: null, label: "— BREAK —", subs: [], isBreak: true },
   {
     time: null,
-    label: "BORDERLESS BANKING WHITE LABEL",
-    subs: ["Partner Structure", "Revenue Streams"],
+    label: "BORDERLESS BANKING WHITE LABEL — DISTRIBUTION MODEL",
+    subs: ["Partner Structure", "White Label Opportunities", "Revenue Streams"],
   },
   {
     time: null,
     label: "BORDERLESS BANKING MINING",
-    subs: ["Infrastructure", "Revenue Models"],
+    subs: ["Mining Infrastructure", "Mining Concepts", "Revenue Models"],
   },
   {
     time: null,
     label: "BORDERLESS BANKING WATER PROJECT",
-    subs: ["Infrastructure", "International Expansion"],
+    subs: ["Infrastructure Overview", "International Expansion Concepts"],
   },
   {
     time: null,
     label: "BORDERLESS BANKING TRADING",
-    subs: ["Market Concepts", "Opportunities"],
+    subs: ["Trading Structures", "Market Concepts", "Opportunities"],
   },
   { time: null, label: "Q&A SESSION", subs: [] },
-  { time: "17:00", label: "FINISH", subs: [], isAnchor: true },
+  { time: "17:00", label: "FINISH", subs: [] },
 ];
+
+const N = SCHEDULE.length; // 17
+const PIN_VH = 180;        // vh per item
 
 export function Day1Section() {
   const sectionRef = useRef<HTMLElement>(null);
-  const lineRef = useRef<HTMLDivElement>(null);
-  const headerRef = useRef<HTMLDivElement>(null);
+  const progressRef = useRef<HTMLDivElement>(null);
   const itemRefs = useRef<(HTMLDivElement | null)[]>([]);
 
   const setItemRef = useCallback((el: HTMLDivElement | null, i: number) => {
@@ -83,70 +84,46 @@ export function Day1Section() {
   }, []);
 
   useEffect(() => {
+    gsap.registerPlugin(ScrollTrigger);
     const section = sectionRef.current;
     if (!section) return;
 
-    const vh = window.innerHeight;
-    const pinDist = vh * 9;
+    // 17 items × 180vh
+    const pinDist = (window.innerHeight * N * PIN_VH) / 100;
 
     const ctx = gsap.context(() => {
-      // Header — fromTo so the explicit opacity:1 target is used
-      gsap.fromTo(
-        headerRef.current,
-        { y: 24, opacity: 0 },
-        {
-          y: 0,
-          opacity: 1,
-          duration: 0.8,
-          ease: "power3.out",
-          scrollTrigger: {
-            trigger: section,
-            start: "top 70%",
-          },
-        }
-      );
+      const tl = gsap.timeline();
 
-      // Vertical line grows alongside scroll progress through the pin
-      gsap.fromTo(
-        lineRef.current,
-        { scaleY: 0 },
-        {
-          scaleY: 1,
-          transformOrigin: "top center",
-          ease: "none",
-          scrollTrigger: {
-            trigger: section,
-            start: "top top",
-            end: `+=${pinDist}`,
-            scrub: 0.4,
-          },
-        }
-      );
-
-      // Set all items hidden up front
-      itemRefs.current.forEach((el) => {
-        if (el) gsap.set(el, { x: -50, opacity: 0 });
-      });
-
-      // Build a timeline that reveals items one-by-one, then scrub it across the pin.
-      // Using a timeline + scrub avoids the "pinned element position = 0" measurement
-      // problem that makes individual per-item ScrollTriggers unreliable.
-      const itemTl = gsap.timeline();
       SCHEDULE.forEach((_, i) => {
-        const itemEl = itemRefs.current[i];
-        if (!itemEl) return;
-        // Slide-in the current item
-        itemTl.to(
-          itemEl,
-          { x: 0, opacity: 1, scale: 1.02, duration: 0.5, ease: "power2.out" },
+        const el = itemRefs.current[i];
+        if (!el) return;
+
+        // Odd indices (0,2,4…) from LEFT; even indices (1,3,5…) from RIGHT
+        const side = i % 2 === 0 ? "-120vw" : "120vw";
+
+        // Fly in [i → i+0.15]
+        tl.fromTo(
+          el,
+          { x: side, opacity: 0 },
+          { x: 0, opacity: 1, duration: 0.15, ease: "power2.out" },
           i
         );
-        // Dim the previous item as the next one arrives
-        if (i > 0) {
-          const prevEl = itemRefs.current[i - 1];
-          if (prevEl) itemTl.to(prevEl, { opacity: 0.3, scale: 1, duration: 0.3 }, i);
-        }
+
+        // Fly out [i+0.85 → i+1] — back the same direction
+        tl.to(
+          el,
+          { x: side, opacity: 0, duration: 0.15, ease: "power2.in" },
+          i + 0.85
+        );
       });
+
+      // Progress bar scaleX 0→1 across the full timeline
+      tl.fromTo(
+        progressRef.current,
+        { scaleX: 0 },
+        { scaleX: 1, duration: N, ease: "none" },
+        0
+      );
 
       ScrollTrigger.create({
         trigger: section,
@@ -154,8 +131,8 @@ export function Day1Section() {
         end: `+=${pinDist}`,
         pin: true,
         pinSpacing: true,
-        scrub: 0.5,
-        animation: itemTl,
+        scrub: 1,
+        animation: tl,
       });
     }, section);
 
@@ -165,111 +142,129 @@ export function Day1Section() {
   return (
     <section
       ref={sectionRef}
-      className="relative min-h-[100dvh] overflow-hidden"
-      style={{ background: "rgba(5,5,5,0.82)" }}
+      className="relative min-h-[100dvh]"
+      style={{ background: "#050505", overflow: "hidden" }}
     >
-      <div className="relative z-10 max-w-3xl mx-auto px-10 min-h-[100dvh] flex flex-col justify-center py-20">
-        {/* Header — centered */}
-        <div ref={headerRef} className="mb-16 text-center" style={{ opacity: 0 }}>
-          <p
-            className="font-label tracking-[0.5em] uppercase mb-3"
-            style={{ fontSize: "0.65rem", color: "#9B8EC4" }}
-          >
-            Day 01 &nbsp;·&nbsp; May 22, 2026 &nbsp;·&nbsp; Full Day Schedule
-          </p>
-          <h2
-            className="font-display leading-none"
-            style={{ fontSize: "clamp(3rem, 7vw, 7rem)", color: "#F0EEF5" }}
-          >
-            Day 1
-          </h2>
-        </div>
+      {/* DAY 1 watermark — faded left */}
+      <div
+        aria-hidden
+        style={{
+          position: "absolute",
+          left: 0,
+          top: "50%",
+          transform: "translateY(-50%)",
+          fontFamily: "var(--font-bebas-neue)",
+          fontSize: "clamp(6rem, 18vw, 18rem)",
+          color: "rgba(155,142,196,0.04)",
+          lineHeight: 1,
+          letterSpacing: "-0.02em",
+          whiteSpace: "nowrap",
+          userSelect: "none",
+          pointerEvents: "none",
+          paddingLeft: "2rem",
+        }}
+      >
+        DAY 1
+      </div>
 
-        {/* Timeline — items are absolutely stacked so each gets the full container.
-            Only the active item is visible at a time, no overflow clipping issues. */}
-        <div className="relative" style={{ minHeight: "50vh" }}>
-          {/* Vertical line */}
+      {/* Items — absolutely stacked, overflow hidden clips fly animations */}
+      <div style={{ position: "absolute", inset: 0, overflow: "hidden" }}>
+        {SCHEDULE.map((item, i) => (
           <div
-            ref={lineRef}
-            className="absolute left-0 top-0 bottom-0"
+            key={i}
+            ref={(el) => setItemRef(el, i)}
             style={{
-              width: "1px",
-              background: "linear-gradient(to bottom, #9B8EC4, rgba(155,142,196,0.15))",
-              transformOrigin: "top",
+              position: "absolute",
+              inset: 0,
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
+              justifyContent: "center",
+              textAlign: "center",
+              padding: "0 8vw",
+              opacity: 0,
             }}
-          />
-
-          {SCHEDULE.map((item, i) => (
-            <div
-              key={i}
-              ref={(el) => setItemRef(el, i)}
-              className="absolute inset-0 flex flex-col justify-center pl-12"
-              style={{ opacity: 0 }}
-            >
-              {/* Timeline dot */}
-              <div
-                className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-[4.5px]"
-                style={{ width: "9px", height: "9px", flexShrink: 0 }}
+          >
+            {/* Time */}
+            {item.time && (
+              <p
+                style={{
+                  fontFamily: "var(--font-dm-mono)",
+                  fontSize: "0.75rem",
+                  color: "#9B8EC4",
+                  letterSpacing: "0.35em",
+                  textTransform: "uppercase",
+                  marginBottom: "0.75rem",
+                }}
               >
-                <div
-                  style={{
-                    width: "9px",
-                    height: "9px",
-                    borderRadius: "50%",
-                    border: `1px solid ${item.isAnchor ? "#9B8EC4" : "rgba(155,142,196,0.5)"}`,
-                    background: item.isAnchor ? "#9B8EC4" : "transparent",
-                  }}
-                />
-              </div>
+                {item.time}
+              </p>
+            )}
 
-              {/* Time + label row */}
-              <div className="flex items-baseline gap-5 flex-wrap mb-4">
-                {item.time && (
+            {/* Title */}
+            <h2
+              style={{
+                fontFamily: "var(--font-bebas-neue)",
+                fontSize: item.isBreak ? "4vw" : "7vw",
+                color: item.isBreak ? "rgba(240,238,245,0.3)" : "#F0EEF5",
+                lineHeight: 1,
+                letterSpacing: item.isBreak ? "0.4em" : "0.05em",
+                marginBottom: item.subs.length > 0 ? "1.5rem" : 0,
+              }}
+            >
+              {item.label}
+            </h2>
+
+            {/* Sub-items */}
+            {item.subs.length > 0 && (
+              <div
+                style={{
+                  display: "flex",
+                  flexWrap: "wrap",
+                  justifyContent: "center",
+                  gap: "0.375rem 1.5rem",
+                }}
+              >
+                {item.subs.map((sub, j) => (
                   <span
-                    className="font-label tracking-[0.2em] flex-shrink-0"
-                    style={{ fontSize: "1rem", color: "#9B8EC4" }}
+                    key={j}
+                    style={{
+                      fontFamily: "var(--font-dm-mono)",
+                      fontSize: "0.85rem",
+                      color: "rgba(240,238,245,0.5)",
+                      letterSpacing: "0.2em",
+                      textTransform: "uppercase",
+                    }}
                   >
-                    {item.time}
+                    {sub}
                   </span>
-                )}
-                <span
-                  className="font-display leading-none"
-                  style={{
-                    fontSize: item.isAnchor
-                      ? "clamp(2rem, 4.5vw, 4rem)"
-                      : item.isBreak
-                      ? "1.4rem"
-                      : "clamp(1.6rem, 3.5vw, 3rem)",
-                    color: item.isBreak ? "rgba(240,238,245,0.35)" : "#F0EEF5",
-                    letterSpacing: item.isBreak ? "0.35em" : "0.06em",
-                  }}
-                >
-                  {item.label}
-                </span>
+                ))}
               </div>
+            )}
+          </div>
+        ))}
+      </div>
 
-              {/* Sub-items */}
-              {item.subs.length > 0 && (
-                <div className="flex flex-wrap gap-x-6 gap-y-1.5">
-                  {item.subs.map((sub, j) => (
-                    <span
-                      key={j}
-                      className="font-label"
-                      style={{
-                        fontSize: "0.8rem",
-                        color: "rgba(155,142,196,0.7)",
-                        letterSpacing: "0.25em",
-                        textTransform: "uppercase",
-                      }}
-                    >
-                      {sub}
-                    </span>
-                  ))}
-                </div>
-              )}
-            </div>
-          ))}
-        </div>
+      {/* Progress bar — lavender, scaleX 0→1 */}
+      <div
+        style={{
+          position: "absolute",
+          bottom: 0,
+          left: 0,
+          right: 0,
+          height: "2px",
+          background: "rgba(155,142,196,0.15)",
+        }}
+      >
+        <div
+          ref={progressRef}
+          style={{
+            height: "100%",
+            background: "#9B8EC4",
+            transformOrigin: "left center",
+            transform: "scaleX(0)",
+          }}
+        />
       </div>
     </section>
   );
