@@ -166,7 +166,27 @@ export function Day1Section() {
       className="relative min-h-[100dvh]"
       style={{ background: "transparent", overflow: "hidden" }}
     >
-      {/* DAY 1 watermark — faded left */}
+      {/* Top-left corner label — always visible */}
+      <p
+        aria-hidden
+        style={{
+          position: "absolute",
+          top: "2rem",
+          left: "2rem",
+          fontFamily: "var(--font-dm-mono)",
+          fontSize: "0.65rem",
+          color: "#9B8EC4",
+          letterSpacing: "0.45em",
+          textTransform: "uppercase",
+          userSelect: "none",
+          pointerEvents: "none",
+          zIndex: 20,
+        }}
+      >
+        DAY 01 &nbsp;·&nbsp; MAY 23, 2026 &nbsp;·&nbsp; FULL DAY SCHEDULE
+      </p>
+
+      {/* DAY 1 watermark — massive, left side */}
       <div
         aria-hidden
         style={{
@@ -175,14 +195,15 @@ export function Day1Section() {
           top: "50%",
           transform: "translateY(-50%)",
           fontFamily: "var(--font-bebas-neue)",
-          fontSize: "clamp(6rem, 18vw, 18rem)",
-          color: "rgba(155,142,196,0.04)",
+          fontSize: "25vw",
+          color: "rgba(255,255,255,0.12)",
           lineHeight: 1,
           letterSpacing: "-0.02em",
           whiteSpace: "nowrap",
           userSelect: "none",
           pointerEvents: "none",
-          paddingLeft: "2rem",
+          paddingLeft: "1rem",
+          zIndex: 1,
         }}
       >
         DAY 1
