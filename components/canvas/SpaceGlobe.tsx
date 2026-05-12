@@ -8,7 +8,7 @@ import type { Mesh } from "three";
 
 export function SpaceGlobe() {
   const meshRef = useRef<Mesh>(null);
-  const texture = useTexture("/5pt space.png");
+  const texture = useTexture("/5pt-space.png");
 
   texture.colorSpace = THREE.SRGBColorSpace;
 

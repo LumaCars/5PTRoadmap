@@ -64,7 +64,7 @@ export function IntroSection() {
             onAnimationComplete={() => setLogoReady(true)}
           >
             <Image
-              src="/5pt logo .png"
+              src="/5pt-logo.png"
               alt="5PT"
               width={200}
               height={100}

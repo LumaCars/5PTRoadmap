@@ -102,7 +102,7 @@ export function OutroSection() {
         {/* Logo — larger than intro */}
         <div ref={logoRef} className="mb-10">
           <Image
-            src="/5pt logo .png"
+            src="/5pt-logo.png"
             alt="5PT"
             width={260}
             height={130}

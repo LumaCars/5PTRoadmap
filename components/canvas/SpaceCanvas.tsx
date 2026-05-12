@@ -6,6 +6,7 @@ import { useMotionValue, useSpring } from "framer-motion";
 import { StarField } from "./StarField";
 import { SpaceGlobe } from "./SpaceGlobe";
 import { CameraController } from "./CameraController";
+import { CanvasErrorBoundary } from "./CanvasErrorBoundary";
 
 export function SpaceCanvas() {
   const mouseX = useMotionValue(0);
@@ -24,26 +25,28 @@ export function SpaceCanvas() {
   }, [mouseX, mouseY]);
 
   return (
-    <div
-      style={{
-        position: "fixed",
-        inset: 0,
-        zIndex: 0,
-        pointerEvents: "none",
-      }}
-    >
-      <Canvas
-        camera={{ position: [0, 0, 500], fov: 60, near: 0.1, far: 5000 }}
-        dpr={[1, 1.5]}
-        gl={{ antialias: false, alpha: false }}
-        style={{ background: "#050505" }}
+    <CanvasErrorBoundary>
+      <div
+        style={{
+          position: "fixed",
+          inset: 0,
+          zIndex: 0,
+          pointerEvents: "none",
+        }}
       >
-        <Suspense fallback={null}>
-          <StarField />
-          <SpaceGlobe />
-          <CameraController springX={springX} springY={springY} />
-        </Suspense>
-      </Canvas>
-    </div>
+        <Canvas
+          camera={{ position: [0, 0, 500], fov: 60, near: 0.1, far: 5000 }}
+          dpr={[1, 1.5]}
+          gl={{ antialias: false, alpha: false }}
+          style={{ background: "#050505" }}
+        >
+          <Suspense fallback={null}>
+            <StarField />
+            <SpaceGlobe />
+            <CameraController springX={springX} springY={springY} />
+          </Suspense>
+        </Canvas>
+      </div>
+    </CanvasErrorBoundary>
   );
 }
